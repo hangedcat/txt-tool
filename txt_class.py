@@ -10,11 +10,21 @@ class FileRecord:
         
         return f"FileRecord(file_name='{self.file_name}', mode='{self.mode}', line_count={self.line_count})"
     
+    @property
+    def mode(self):
+        return self._mode
+    
+    @mode.setter
+    def mode(self, mode: str):
+        if mode not in ('read', 'write', 'append'):
+            raise ValueError("mode should either be 'read' or 'write'.")
+        self._mode = mode
+
     def update_count(self, count: int) -> None:
 
         self.line_count = count
 
-    def line_reader(self):
+    def line_reader(self) -> int | None:
         
         try :
             with open(self.file_name, 'r') as f:
@@ -23,14 +33,15 @@ class FileRecord:
         except FileNotFoundError:
             print(f"Error : {self.file_name} not found")
 
-    def text_writer(self, message: str):
+    def text_writer(self, message: str) -> None:
 
         if self.mode.lower() == "write":
             mode = 'w'
         elif self.mode.lower() == 'append':
             mode = 'a'
         else:
-            return print(f"'{self.mode}' is not valid.")
+            print(f"'{self.mode}' is not valid.")
+            return
 
         try:
             with open(self.file_name, mode) as f:
@@ -39,12 +50,6 @@ class FileRecord:
         except PermissionError:
             print(f"Error : you have no permission for {self.file_name}")
 
+f1 = FileRecord("text.txt", "read")
 
-File_1 = FileRecord(file_name="text.txt", mode="sama")
-File_2 = FileRecord(file_name="text.txt", mode="read")
-
-x = File_1.line_reader()
-File_1.text_writer(message="hdjahsdja")
-
-print(File_1)
-print(File_2)
+print(f1.mode)
