@@ -12,13 +12,24 @@ class FileRecord:
     
     @property
     def mode(self):
+
         return self._mode
     
     @mode.setter
     def mode(self, mode: str):
+
         if mode not in ('read', 'write', 'append'):
             raise ValueError("mode should either be 'read' or 'write'.")
         self._mode = mode
+
+    @staticmethod
+    def validate_extension(file_name: str):
+        return file_name.endswith(".txt")
+    
+    @classmethod
+    def from_existing_file(cls, file_name: str):
+        return cls(file_name, mode = 'read')
+        
 
     def update_count(self, count: int) -> None:
 
@@ -50,6 +61,8 @@ class FileRecord:
         except PermissionError:
             print(f"Error : you have no permission for {self.file_name}")
 
-f1 = FileRecord("text.txt", "read")
+print(FileRecord.validate_extension("text.txt"))
+print(FileRecord.validate_extension("text.csv"))
 
-print(f1.mode)
+f1 = FileRecord.from_existing_file("text.txt")
+print(f1)
