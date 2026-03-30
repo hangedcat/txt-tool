@@ -60,6 +60,3 @@ class FileAppender(FileRecord):
                 print(f"'{message}' have been append into {self.file_name}")
         except PermissionError:
             print(f"Error : you have no permission for {self.file_name}")
-
-f1 = FileAppender('text.txt')
-f1.mode = 'w'
