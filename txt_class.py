@@ -14,8 +14,8 @@ class FileRecord:
 
     @mode.setter
     def mode(self, mode: str):
-        if mode not in ('read', 'write', 'append'):
-            raise ValueError("mode should either be 'read' or 'write'.")
+        if mode not in ('r', 'w', 'a'):
+            raise ValueError("mode should either be 'r', 'w' or 'a'.")
         self._mode = mode
 
     @staticmethod
@@ -60,3 +60,6 @@ class FileAppender(FileRecord):
                 print(f"'{message}' have been append into {self.file_name}")
         except PermissionError:
             print(f"Error : you have no permission for {self.file_name}")
+
+f1 = FileAppender('text.txt')
+f1.mode = 'w'
