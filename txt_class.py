@@ -35,6 +35,15 @@ class FileReader(FileRecord):
         except FileNotFoundError:
             print(f"Error : {self.file_name} not found")
 
+    @staticmethod
+    def file_line_reader(file_name: str):
+        try:
+            with open(file_name, 'r') as f:
+                for line in f:
+                    yield line
+        except FileNotFoundError:
+            print(f'"{file_name}" not found!')
+
 class FileWriter(FileRecord):
 
     def __init__(self, file_name: str):
@@ -61,26 +70,5 @@ class FileAppender(FileRecord):
         except PermissionError:
             print(f"Error : you have no permission for {self.file_name}")
 
-def file_line_reader(file_name: str):
 
-    try:
-        with open(file_name, 'r') as f:
-            for line in f:
-                yield line
-    except FileNotFoundError:
-        print(f'"{file_name}" not found!')
 
-def simple_gen():
-    yield 1
-    yield 2
-    yield 3
-
-g = simple_gen()
-
-print("First loop:")
-for x in g:
-    print(x)
-
-print("Second loop:")
-for x in g:
-    print(x)
