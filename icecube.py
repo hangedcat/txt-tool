@@ -1,6 +1,7 @@
 from pathlib import Path
 from functools import wraps
 from collections import Counter, defaultdict, deque
+from itertools import chain, islice, groupby
 from typing import Union, Optional, TypeVar, Generator
 import logging
 import os
@@ -137,3 +138,20 @@ def tail(file_name: str, n: int) -> list[str]:
     for line in file_line_reader(file_name=file_name):
         lines.append(line.strip())
     return list(lines)
+
+def head(file_name: str, n: int) -> list[str]:
+    return list(islice(file_line_reader(file_name), n))
+    
+def read_all_files(folder: Path | str) ->Generator[str, None, None]:
+    generators = [file_line_reader(f) for f in get_txt_file(folder)]
+
+    yield from chain.from_iterable(generators)
+
+def group_by_linecount(folder: Path | str):
+    files = sorted(process_folder(folder), key= lambda x: x.line_count)
+    for key, group in groupby(files, key= lambda x: x.line_count):
+        print(f"{key} lines:")
+        for file in group:
+            print(f"  {Path(file.file_name).name}")
+
+group_by_linecount("D:/Project")
