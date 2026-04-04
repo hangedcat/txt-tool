@@ -1,5 +1,6 @@
 from pathlib import Path
 from functools import wraps
+from collections import Counter, defaultdict, deque
 from typing import Union, Optional, TypeVar, Generator
 import logging
 import os
@@ -92,7 +93,7 @@ def file_line_reader(file_name: Union[str, Path]) -> Generator[str, None, None]:
     except FileNotFoundError:
         logger.warning(f"File not found: {file_name}")
 
-def get_txt_file(folder: Path) -> list[Path]:
+def get_txt_file(folder: Path | str) -> list[Path]:
     p = Path(folder)
     return list(p.glob("*.txt"))
 
@@ -107,7 +108,7 @@ def timer(func):
     return wrapper
 
 @timer
-def process_folder(folder: Path) -> list[FileReader]:
+def process_folder(folder: Path | str) -> list[FileReader]:
     n = get_txt_file(folder)
     m = [FileReader(x) for x in n]
     for i in m:
@@ -123,3 +124,16 @@ def print_report(summary: list[FileReader]) -> None:
         print(f"{Path(file.file_name).name :<30} {file.line_count}")
     print("-" * 50)
     print(f"Total Lines: {sum(x.line_count for x in summary)}")
+
+def analyze_folder(folder: Path | str) -> None:
+    files = process_folder(folder)
+    line_count = [file.line_count for file in files]
+    analyze = Counter(line_count)
+    for linecount, numfiles in analyze.most_common():
+        print(f'{linecount} Line : {numfiles} File')
+
+def tail(file_name: str, n: int) -> list[str]:
+    lines = deque(maxlen=n)
+    for line in file_line_reader(file_name=file_name):
+        lines.append(line.strip())
+    return list(lines)
