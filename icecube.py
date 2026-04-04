@@ -38,6 +38,47 @@ class FileReader(FileRecord):
         for line in file_line_reader(self.file_name):
             count += 1
         self.line_count = count
+    
+    def __enter__(self):
+        try:
+            self.file = open(self.file_name, "r")
+            return self.file
+        except FileNotFoundError:
+            print(f"Error: '{self.file_name}' not found.")
+            self.file = None
+            return None
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if self.file:
+            self.file.close()
+        return False
+
+class FileWriter(FileRecord):
+
+    def __init__(self, file_name: str):
+        super().__init__(file_name, mode= 'w')
+
+    def text_writer(self, message: str) -> None:
+        try:
+            with open(self.file_name, 'w') as f:
+                f.write(message)
+                print(f"'{message}' have been written into {self.file_name}")
+        except PermissionError:
+            print(f"Error : you have no permission for {self.file_name}")
+
+class FileAppender(FileRecord):
+
+    def __init__(self, file_name: str):
+        super().__init__(file_name, mode= 'a')
+
+    def text_appender(self, message: str) -> None:
+        try:
+            with open(self.file_name, 'a') as f:
+                f.write(message)
+                print(f"'{message}' have been append into {self.file_name}")
+        except PermissionError:
+            print(f"Error : you have no permission for {self.file_name}")
+
 
 def file_line_reader(file_name: str):
     try:
@@ -79,6 +120,7 @@ def print_report(summary: list):
     print("-" * 50)
     print(f"Total Lines: {sum(x.line_count for x in summary)}")
 
-i = process_folder('D:/Project')
-print_report(i)
 
+with FileReader("text.txt") as f:
+    if f is not None:
+        print(f.read())
